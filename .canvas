@@ -1,0 +1,6 @@
+---
+:lessons:
+- :id: 300456
+  :course_id: 7602
+  :canvas_url: https://learning.flatironschool.com/courses/7602/pages/flask-sqlalchemy-code-along
+  :type: page
