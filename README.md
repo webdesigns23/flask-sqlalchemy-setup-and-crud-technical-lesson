@@ -37,6 +37,20 @@ $ pipenv install
 $ pipenv shell
 ```
 
+### Task 1: Define the Problem
+
+Currently, the pet adoption data is stored manually in spreadsheets, leading to frequent mistakes, redundant entries, and lost information. The shelter needs a reliable and scalable database-driven solution that simplifies data management and can eventually be extended into a full web application.
+
+You must create a Flask application that:
+* Connects to a database using Flask-SQLAlchemy.
+* Defines a Pet model representing the animals available for adoption.
+* Sets up database migrations using Flask-Migrate.
+* Performs CRUD (Create, Read, Update, Delete) operations on pet data entirely through Python code, without writing SQL manually.
+
+Efficiently managing backend data is a critical real-world skill for web developers. ORMs like SQLAlchemy allow developers to interact with databases in a way that is faster, safer, and more maintainable — a key practice in modern backend development.
+
+### Task 2: Determine the Design
+
 Let's use the `tree` command to view the directory structure. MacOS users can
 install this with the command `brew install tree`. WSL and Linux users can run
 `sudo apt-get install tree` to download it.
@@ -62,7 +76,17 @@ The `server` folder initially contains two files, `app.py` and `models.py`
   database.
 - `models.py` contains a **model** named `Pet`.
 
-### Step 1: Define Model
+Our pets table will have the following columns and data types:
+
+* id (integer and primary_key)
+* name (string, 50 characters max)
+* species (string)
+
+The pets table will require a model in models.py and database configuration in app.py.
+
+### Task 3: Develop, Test, and Refine the Code
+
+#### Step 1: Define Model
 
 A **model class**, also referred to simply as a **model**, is a Python class
 that (1) defines a new Python data type, and (2) defines database metadata to
@@ -103,7 +127,7 @@ class Pet(db.Model):
     species = db.Column(db.String)
 ```
 
-## Step 2: Add Column Constraints
+#### Step 2: Add Column Constraints
 
 Next, add column constraints to our model specify primary_key and any other constraints we want such as string character limits.
 
@@ -125,7 +149,7 @@ class Pet(db.Model):
   - the `name` column stores a string
   - the `species` column stores a string
 
-### Step 2: Configure the Flask-SQLAlchemy extension
+#### Step 3: Configure the Flask-SQLAlchemy extension
 
 The file `app.py`:
 
@@ -175,7 +199,7 @@ $ export FLASK_APP=app.py
 $ export FLASK_RUN_PORT=5555
 ```
 
-### Step 4: Define schema and generate migrations
+#### Step 4: Define schema and generate migrations
 
 We know how to write SQL statements to define and modify a database schema. For
 example, we used the SQL `create table` statement to define a database table,
@@ -233,7 +257,7 @@ The `migrations` folder contains a migration environment:
 - `alembic.ini` defines environment configuration options.
 - `env.py` defines and instantiates a SQLAlchemy engine, connects to that
   engine, starts a transaction, and calls the migration engine.
-- `script.py.mako` is a template that is used when creating a migration- it
+- `script.py.mako` is a template that is used when creating a migration - it
   defines the basic structure of a migration.
 - `versions` is a directory to hold migration scripts.
 
@@ -247,7 +271,7 @@ Type the following command to generate an initial migration:
 $ flask db migrate -m "Initial migration."
 ```
 
-. The command results in two new files:
+The command results in two new files:
 
 - The database `app.db` is added to the `instance` directory.
 - A Python migration script of the form `###_message.py` is added to the
@@ -281,7 +305,7 @@ Open the migration script in the editor. You'll see it contains functions
 `upgrade()` function is generated using the schema details defined by the `Pet`
 model class.
 
-## Step 5: Upgrade the database
+#### Step 5: Upgrade the database
 
 Finally, type the following to run the `upgrade()` function and create the
 `pets` table:
@@ -298,9 +322,9 @@ extension. Assuming you've installed the extension, right-click on `app.db`,
 then select `Open With.../SQLite Viewer`. Confirm the database contains a new
 table named `pets` with columns as defined by the `Pet` model class.
 
-![new pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/pet_table.png)
+![new pet table](/assets/pet_table.png)
 
-## Step 6: Enter the Flask Shell
+#### Step 6: Enter the Flask Shell
 
 Let's see how to persist data about a pet. Recall from the previous lessons
 about ORM that we don't actually save a Python object to the database. Instead,
@@ -328,7 +352,7 @@ First, let's import the necessary `db` database object and the `Pet` model:
 >>> from models import db, Pet
 ```
 
-## Step 7: Use Flask Shell to add data with `add()` and `commit()`
+#### Step 7: Use Flask Shell to add data with `add()` and `commit()`
 
 Let's add a row to the `pets` table for a dog named "Fido". The steps to add a
 row are as follows:
@@ -380,9 +404,7 @@ This is especially important if statements that occur in a sequence depend on
 previous statements executing properly. The workflow for a transaction is
 illustrated in the image below:
 
-![Workflow for a successful transaction. Shows that after a transaction begins,
-the state of the database is recorded, then statements are executed, then the
-transaction is committed if all statements are successful.](https://curriculum-content.s3.amazonaws.com/python/esal_0401.png "successful transaction")
+![Workflow for a successful database transaction.](/assets/successful-db-transaction.png)
 
 If any of the SQL statements in a transaction fail to execute properly, the
 database will be rolled back to the state recorded at the beginning of the
@@ -412,7 +434,7 @@ was inserted in the database table.
 Check the `pets` table to confirm a new row was added. If you are using SQLite
 Viewer, you may need to press the refresh button to see the new row:
 
-![first row inserted in pet](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/insert_dog1.png)
+![first row inserted in pet](/assets/insert_dog_pets_table.png)
 
 When the transaction is committed and the row is inserted in the `pets` table,
 the `id` of the local `Pet` instance is assigned the primary key value from the
@@ -436,7 +458,7 @@ at the Flask shell prompt:
 Refresh the view in the SQLite Viewer to confirm a new row was inserted in the
 `pets` table for the cat named "Whiskers":
 
-![second row inserted in pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/insert_cat.png)
+![second row inserted in pet table](/assets/insert_cat_pets_table.png)
 
 In the Flask shell, we can confirm the `id` attribute is assigned for the newly
 persisted object:
@@ -452,9 +474,9 @@ persisted object:
 <Pet 2, Whiskers, Cat>
 ```
 
-## Step 8: Use Flask shell to query() data
+#### Step 8: Use Flask shell to query() data
 
-### query()
+##### query()
 
 We can query all the rows in the table associated with the `Pet` model as shown:
 
@@ -474,7 +496,7 @@ function:
 <Pet 1, Fido, Dog>
 ```
 
-### filter()
+##### filter()
 
 We can filter rows using the `filter` function. The function takes a boolean
 expression as an argument that is evaluated against each model instance returned
@@ -492,7 +514,7 @@ If we want pets whose name starts with the letter 'F':
 [<Pet 1, Fido, Dog>]
 ```
 
-### filter_by()
+##### filter_by()
 
 The `filter` function is powerful in that you can pass any boolean expression to
 test on a model instance. However, we often want to just look for rows having a
@@ -512,7 +534,7 @@ We can filter by the primary key `id` to get a specific row:
 <Pet 1, Fido, Dog>
 ```
 
-### get()
+##### get()
 
 If you want to access a certain row by its primary key, use
 `db.session.get(Model, id)`. It will return the row with the given primary key,
@@ -534,7 +556,7 @@ True
 >>>
 ```
 
-### order_by()
+##### order_by()
 
 By default, results from any database query are ordered by their primary key.
 The `order_by()` method allows us to sort by any column. To sort in ascending
@@ -545,7 +567,7 @@ order of species:
 [<Pet 2, Whiskers, Cat>, <Pet 1, Fido, Dog>]
 ```
 
-### `func`
+##### `func`
 
 Importing `func` from `sqlalchemy` gives us access to common SQL operations
 through functions like `sum()` and `count()`.
@@ -568,7 +590,7 @@ It is best practice to call these functions as `func.operation()` rather than
 their name alone because many of these functions have name conflicts with
 functions in the Python standard library, such as `sum()`.
 
-## Step 9: Use Flask Shell to update data
+#### Step 9: Use Flask Shell to update data
 
 When we assign a new attribute value to a Python object that has been persisted
 to the database, the associated table row **does not** automatically get
@@ -590,9 +612,9 @@ We need to perform the following steps to update a row in the `pets` table:
 
 We can see the table row is updated once the transaction is committed:
 
-![update row in pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/update_pet.png)
+![update row in pet table](/assets/update_pet.png)
 
-## Step 10: Use Flask Shell to delete() data
+#### Step 10: Use Flask Shell to delete() data
 
 The `db.session.delete()` function is used to delete the row associated with an
 object:
@@ -611,7 +633,7 @@ Query the `Pet` model to confirm the row was deleted:
 
 We can also check the table using the SQLite Viewer:
 
-![delete row from pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/delete_pet.png)
+![delete row from pet table](/assets/delete_pet.png)
 
 If you want to delete all table rows, call the function `Pet.query.delete()`.
 The function returns the number of rows deleted. Make sure you commit the
@@ -632,9 +654,9 @@ We can use the Flask shell to confirm there are no pets in the table:
 
 The SQLite Viewer also shows the empty table:
 
-![new pet table](https://curriculum-content.s3.amazonaws.com/7159/python-p4-v2-flask-sqlalchemy/pet_table.png)
+![new pet table](/assets/pet_table.png)
 
-## Step 11: Exit the Flask shell
+#### Step 11: Exit the Flask shell
 
 You can exit the Flask shell and return to the command line prompt using
 `CTRL + D` or the `exit()` function:
@@ -645,7 +667,7 @@ You can exit the Flask shell and return to the command line prompt using
 $
 ```
 
-## Step 12: Commit, Push, and Merge to GitHub
+#### Step 12: Commit, Push, and Merge to GitHub
 
 * Commit and push your code
 
@@ -656,7 +678,6 @@ git push
 ```
 
 * If you created a separate feature branch, remember to open a PR on main and merge.
-* Submit your repo with the updated code to Canvas.
 
 ### Task 4: Document and Maintain
 
