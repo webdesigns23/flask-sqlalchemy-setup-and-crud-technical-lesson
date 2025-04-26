@@ -2,11 +2,11 @@
 
 ## The Scenario
 
-In this lesson, we will use Flask-SQLAlchemy to configure a database connection
-and to define a model for storing data about pets. We will use Flask-Migrate to
-perform an initial migration to create a database containing the pets table. 
-Then, we'll use Flask-SQLAlchemy functions to insert, update, delete, and query 
-rows in a table, all without writing any SQL!
+You have just joined a small tech startup called Pawfect Match, which specializes in helping shelters and foster homes connect pets with new families. The team is building an internal tool to keep track of pets currently available for adoption.
+
+The current setup is messy — volunteers are trying to manage everything in spreadsheets, which often leads to errors and duplicate records. Your first task as a new junior developer is to help them set up a proper web-based backend.
+
+You’ll build a basic Flask application using Flask-SQLAlchemy to define a Pet model, set up the database, and implement basic CRUD operations. This foundational system will allow the team to easily add, view, update, and remove pets from the adoption list — all without having to write raw SQL queries!
 
 ---
 
